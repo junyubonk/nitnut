@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 🤍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="stars"></div>
+    <div class="moon" id="moon"></div>
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
+    <div id="particles"></div>
+
+    <main class="hero" id="hero">
+        <div class="envelope-container">
+            <div class="envelope" id="openEnvelope" role="button" tabindex="0" aria-label="Buka surat">
+                <div class="envelope-back"></div>
+                <div class="envelope-letter"><span>💌</span></div>
+                <div class="envelope-flap"></div>
+                <div class="seal">🤍</div>
+            </div>
+        </div>
+        <h1>For Someone Special</h1>
+        <p class="subtitle" id="subtitle">Click the envelope.</p>
+    </main>
+
+    <!-- PASSWORD POPUP -->
+    <div class="popup hidden" id="popup">
+        <div class="popup-card" id="popupCard">
+            <h2>🔒 Locked Letter</h2>
+            <p>This letter was made for only one person.</p>
+            <input id="password" type="password" placeholder="Enter the secret code" autocomplete="off">
+            <button id="unlockBtn">Unlock</button>
+            <p id="error" role="alert"></p>
+            <p id="hint"></p>
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading hidden" id="loading">
+        <h2>Decrypting Letter...</h2>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <p id="loadingText">Initializing...</p>
+    </div>
+
+    <!-- LETTER -->
+    <section class="letter hidden" id="letter">
+        <div class="paper" id="paper">
+            <h2>Dear, 🤍</h2>
+            <div id="typewriter"></div>
+            <p class="skip" id="skipHint">klik kertas untuk melewati animasi</p>
+            <div class="actions">
+                <button id="hugBtn">Hold Me 🤍</button>
+                <button id="closeBtn" class="ghost">Tutup surat</button>
+            </div>
+            <p id="hugMsg"></p>
+        </div>
+    </section>
+
+    <!-- MUSIC -->
+    <button id="musicBtn" aria-label="Putar musik">🎵</button>
+    <audio id="music" loop preload="auto">
+        <source src="assets/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="heartContainer"></div>
+    <script src="script.js"></script>
+</body>
+</html>

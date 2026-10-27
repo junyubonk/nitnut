@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You 🤍</title>
+    <title>Meow 🐾 For You</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
@@ -17,25 +17,46 @@
     <div id="particles"></div>
 
     <main class="hero" id="hero">
+
+        <!-- FOTO PROFIL: taruh foto di folder assets/ → me.jpg dan her.jpg (ganti nama di bawah kalau perlu) -->
+        <div class="couple">
+            <div class="person">
+                <div class="ava"><div class="avatar" title="Aku">🐱<img src="assets/me.jpg" alt="Aku" onerror="this.onerror=function(){this.remove()};this.src='assets/me.png'"></div></div>
+                <span class="name">Aku</span>
+            </div>
+            <button class="love" aria-label="Kirim sayang">💗</button>
+            <div class="person">
+                <div class="ava"><div class="avatar" title="Dia">😺<img src="assets/her.jpg" alt="Dia" onerror="this.onerror=function(){this.remove()};this.src='assets/her.png'"></div></div>
+                <span class="name">Dia</span>
+            </div>
+        </div>
+        <p id="loveCount">Sentuh 💗 untuk kirim sayang</p>
+
         <div class="envelope-container">
             <div class="envelope" id="openEnvelope" role="button" tabindex="0" aria-label="Buka surat">
+                <div class="ear l"></div><div class="ear r"></div>
                 <div class="envelope-back"></div>
                 <div class="envelope-letter"><span>💌</span></div>
                 <div class="envelope-flap"></div>
-                <div class="seal">🤍</div>
+                <div class="face">
+                    <div class="eye"><i class="pupil"></i></div>
+                    <div class="eye"><i class="pupil"></i></div>
+                </div>
+                <div class="seal"></div>
             </div>
         </div>
-        <h1>For Someone Special</h1>
-        <p class="subtitle" id="subtitle">Click the envelope.</p>
+
+        <h1>Meow, ada surat buat kamu</h1>
+        <p class="subtitle" id="subtitle">Klik amplopnya 🐾</p>
     </main>
 
     <!-- PASSWORD POPUP -->
     <div class="popup hidden" id="popup">
         <div class="popup-card" id="popupCard">
-            <h2>🔒 Locked Letter</h2>
-            <p>This letter was made for only one person.</p>
-            <input id="password" type="password" placeholder="Enter the secret code" autocomplete="off">
-            <button id="unlockBtn">Unlock</button>
+            <h2>🐾 Surat Terkunci</h2>
+            <p>Surat ini cuma buat satu orang, dan dijaga seekor kucing galak.</p>
+            <input id="password" type="password" placeholder="Kode rahasia" autocomplete="off">
+            <button id="unlockBtn">Buka</button>
             <p id="error" role="alert"></p>
             <p id="hint"></p>
         </div>
@@ -43,7 +64,8 @@
 
     <!-- LOADING -->
     <div class="loading hidden" id="loading">
-        <h2>Decrypting Letter...</h2>
+        <div class="loading-cat">🐈</div>
+        <h2>Membuka Surat...</h2>
         <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
         <p id="loadingText">Initializing...</p>
     </div>
@@ -51,11 +73,12 @@
     <!-- LETTER -->
     <section class="letter hidden" id="letter">
         <div class="paper" id="paper">
+            <div id="miniSlot"></div>
             <h2>Dear, 🤍</h2>
             <div id="typewriter"></div>
             <p class="skip" id="skipHint">klik kertas untuk melewati animasi</p>
             <div class="actions">
-                <button id="hugBtn">Hold Me 🤍</button>
+                <button id="hugBtn">Tahan buat elus 🐱</button>
                 <button id="closeBtn" class="ghost">Tutup surat</button>
             </div>
             <p id="hugMsg"></p>

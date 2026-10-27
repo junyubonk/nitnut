@@ -57,18 +57,20 @@ const heartContainer = $("heartContainer"), stars = $("stars"), particles = $("p
 const moon = $("moon"), hero = $("hero"), subtitle = $("subtitle"), loveCount = $("loveCount");
 
 let unlocked = false, wrongCount = 0;
+const small = matchMedia("(max-width:768px)").matches; // HP: kurangi efek supaya ringan
+const buzz = (p) => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} }; // getar (Android)
 
 /* ===========================
    BACKGROUND
 =========================== */
-for (let i = 0; i < 150; i++) {
+for (let i = 0; i < (small ? 70 : 150); i++) {
     const s = document.createElement("span");
     const size = Math.random() * 2.5 + 0.8;
     s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;` +
         `animation-duration:${2 + Math.random() * 5}s;animation-delay:-${Math.random() * 5}s`;
     stars.appendChild(s);
 }
-for (let i = 0; i < 16; i++) { // jejak kaki & ikan melayang naik
+for (let i = 0; i < (small ? 8 : 16); i++) { // jejak kaki & ikan melayang naik
     const p = document.createElement("i");
     p.textContent = i % 5 === 0 ? "🐟" : "🐾";
     p.style.cssText = `left:${Math.random() * 100}%;font-size:${12 + Math.random() * 12}px;` +
@@ -94,25 +96,28 @@ moon.onclick = () => {
    POINTER: jejak kaki + mata kucing mengikuti kursor
 =========================== */
 let lastPaw = 0, pawSide = 1;
-document.addEventListener("pointermove", (e) => {
-    // mata
+function lookAt(x, y) { // pupil mengikuti kursor / jari
     document.querySelectorAll(".eye").forEach((eye) => {
         const r = eye.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-        const a = Math.atan2(dy, dx), d = Math.min(5, Math.hypot(dx, dy) / 30);
-        eye.firstElementChild.style.translate = `${Math.cos(a) * d}px ${Math.sin(a) * d}px`;
+        const dx = x - (r.left + r.width / 2), dy = y - (r.top + r.height / 2);
+        const ang = Math.atan2(dy, dx), d = Math.min(r.width * 0.25, Math.hypot(dx, dy) / 30);
+        eye.firstElementChild.style.translate = `${Math.cos(ang) * d}px ${Math.sin(ang) * d}px`;
     });
-    // jejak kaki (hanya di halaman depan)
+}
+function pawAt(x, y, force) {
     const now = performance.now();
-    if (now - lastPaw < 110 || unlocked) return;
+    if ((now - lastPaw < 110 && !force) || unlocked) return;
     lastPaw = now; pawSide *= -1;
     const p = document.createElement("span");
     p.className = "paw"; p.textContent = "🐾";
-    p.style.left = e.clientX + pawSide * 8 + "px"; p.style.top = e.clientY + "px";
+    p.style.left = x + pawSide * 8 + "px"; p.style.top = y + "px";
     p.style.setProperty("--r", pawSide * 25 + "deg");
     document.body.appendChild(p);
     setTimeout(() => p.remove(), 1000);
-});
+}
+document.addEventListener("pointermove", (e) => { lookAt(e.clientX, e.clientY); pawAt(e.clientX, e.clientY); });
+// di HP tidak ada "hover", jadi setiap tap juga meninggalkan jejak kaki & membuat mata melirik
+document.addEventListener("pointerdown", (e) => { lookAt(e.clientX, e.clientY); pawAt(e.clientX, e.clientY, true); });
 
 /* ===========================
    AUDIO: musik + suara kucing
@@ -137,6 +142,7 @@ function ensureAC() {
 
 // "Meow" buatan: sawtooth + filter formant yang disapu naik-turun
 function meow(pitch = 1, sad = false) {
+    buzz(sad ? [60, 40, 60] : 18);
     try {
         ensureAC();
         const t = ac.currentTime, dur = sad ? 0.9 : 0.6;
@@ -229,7 +235,7 @@ musicBtn.onclick = () => (playing ? stopMusic() : startMusic());
    FOTO PROFIL + HATI
 =========================== */
 let loveTaps = 0;
-function burst(n, from) { for (let i = 0; i < n; i++) createHeart(from); }
+function burst(n) { n = small ? Math.ceil(n * 0.6) : n; for (let i = 0; i < n; i++) createHeart(); }
 
 document.addEventListener("click", (e) => {
     const av = e.target.closest(".avatar");
@@ -282,7 +288,7 @@ function openPopup() {
     if (unlocked) return;
     meow(1);
     popup.classList.remove("hidden");
-    setTimeout(() => password.focus(), 50);
+    password.focus({ preventScroll: true }); // harus sinkron agar keyboard HP (iOS) muncul
 }
 function closePopup() { popup.classList.add("hidden"); errorEl.textContent = ""; }
 function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
@@ -375,14 +381,23 @@ function startHug(e) {
     if (holdTimer) return;
     hugBtn.classList.add("holding");
     purrStart(); burst(10);
-    holdTimer = setInterval(() => burst(3), 200);
+    buzz(40);
+    holdTimer = setInterval(() => { burst(3); buzz(30); }, 200);
 }
 function endHug() {
     if (!holdTimer) return;
     clearInterval(holdTimer); holdTimer = null;
-    hugBtn.classList.remove("holding"); purrStop();
+    hugBtn.classList.remove("holding"); purrStop(); buzz(0);
     hugMsg.textContent = HUG_MESSAGES[hugCount++ % HUG_MESSAGES.length];
 }
+hugBtn.addEventListener("contextmenu", (e) => e.preventDefault()); // cegah menu long-press di HP
 hugBtn.addEventListener("pointerdown", startHug);
 ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => hugBtn.addEventListener(ev, endHug));
 hugBtn.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && !e.repeat) { startHug(e); setTimeout(endHug, 1200); } });
+
+/* HP: kalau tab/aplikasi ke background, jeda musik; saat kembali, lanjutkan */
+let resumeAfter = false;
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { resumeAfter = playing; if (playing) stopMusic(); purrStop(); }
+    else if (resumeAfter) { resumeAfter = false; startMusic(); }
+});
